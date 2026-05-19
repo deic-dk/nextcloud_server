@@ -12,9 +12,9 @@ import { FilePickerClosed, getFilePickerBuilder, openConflictPicker, showError, 
 import { emit } from '@nextcloud/event-bus'
 import { FileAction, FileType, getUniqueName, NodeStatus, Permission } from '@nextcloud/files'
 import { defaultRootPath, getClient, getDefaultPropfind, resultToNode } from '@nextcloud/files/dav'
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
+import { basename, join } from '@nextcloud/paths'
 import { getConflicts } from '@nextcloud/upload'
-import { basename, join } from 'path'
 import Vue from 'vue'
 
 import CopyIconSvg from '@mdi/svg/svg/folder-multiple-outline.svg?raw'
@@ -158,7 +158,11 @@ export async function * handleCopyMoveNodesTo(nodes: INode[], destination: IFold
 		}
 	}
 
-	const actionFinished = createLoadingNotification(method, nodes.map((node) => node.basename), destination.path)
+	const actionFinished = createLoadingNotification(
+		method,
+		nodes.map((node) => node.displayname),
+		join(destination.dirname, destination.displayname),
+	)
 	const queue = getQueue()
 	try {
 		for (const node of nodes) {
